@@ -1,18 +1,35 @@
-btn.addEventListener(
-"pointerdown",
-async (e)=>{
+async function connectBLE(){
 
-e.preventDefault();
+    try{
 
-await send(msg);
-});
+        const device =
+        await navigator.bluetooth.requestDevice({
 
-btn.addEventListener(
-"pointerup",
-async (e)=>{
+            acceptAllDevices:true,
 
-e.preventDefault();
+            optionalServices:[
+                "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
+            ]
+        });
 
-await send("S");
-}); 
+        const server =
+        await device.gatt.connect();
+
+        const service =
+        await server.getPrimaryService(
+            "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
+        );
+
+        uartTx =
+        await service.getCharacteristic(
+            "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+        );
+
+        console.log("BLE接続成功");
+
+    }catch(e){
+
+        console.log(e);
+    }
+}
 
