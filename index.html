@@ -3,574 +3,269 @@
 
 <head>
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="
-width=device-width,
-initial-scale=1,
-user-scalable=no">
-
-<title>
-micro:bit FPV Car
-</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>micro:bit FPV Car</title>
 
 <link rel="manifest" href="manifest.json">
-
 <meta name="theme-color" content="#000814">
 
 <style>
-
 body{
-
     margin:0;
-
     background:#000814;
-
     color:white;
-
     font-family:sans-serif;
-
     text-align:center;
-
     overflow:hidden;
-
     touch-action:none;
 }
-
 h1{
-
     font-size:42px;
-
     margin:12px;
 }
-
 #video{
-
     width:94%;
-
     height:320px;
-
     background:black;
-
     border-radius:25px;
-
     object-fit:cover;
 }
-
 #status{
-
     width:88%;
-
     margin:auto;
-
     margin-top:15px;
-
     padding:18px;
-
     background:#111c3d;
-
     border-radius:25px;
-
     font-size:30px;
-
     color:#44ff88;
 }
-
 #connectBtn{
-
     width:92%;
-
     height:95px;
-
     margin-top:15px;
-
     border:none;
-
     border-radius:25px;
-
     background:#2563eb;
-
     color:white;
-
     font-size:38px;
-
     touch-action:none;
 }
-
 .control-grid{
-
     margin-top:20px;
-
     display:grid;
-
-    grid-template-columns:
-    1fr 1fr 1fr;
-
-    grid-template-rows:
-    140px 140px;
-
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:140px 140px;
     gap:18px;
-
     padding:18px;
 }
-
 .ctrl{
-
     width:100%;
-
     height:140px;
-
     border:none;
-
     border-radius:30px;
-
     background:#3158d8;
-
     color:white;
-
     font-size:70px;
-
     touch-action:none;
 }
-
-#up{
-    grid-column:2;
-}
-
-#left{
-    grid-column:1;
-    grid-row:2;
-}
-
-#down{
-    grid-column:2;
-    grid-row:2;
-}
-
-#right{
-    grid-column:3;
-    grid-row:2;
-}
+#up{ grid-column:2; }
+#left{ grid-column:1; grid-row:2; }
+#down{ grid-column:2; grid-row:2; }
+#right{ grid-column:3; grid-row:2; }
 
 #stop{
-
     width:92%;
-
     height:110px;
-
     border:none;
-
     border-radius:30px;
-
     background:#dc2626;
-
     color:white;
-
     font-size:45px;
-
     touch-action:none;
 }
 
 .speed-title{
-
     margin-top:20px;
-
     font-size:42px;
 }
-
 #speedValue{
-
     font-size:60px;
-
     margin-top:5px;
 }
-
 .speed-row{
-
     display:flex;
-
     gap:15px;
-
     padding:15px;
 }
-
 .speed-btn{
-
     flex:1;
-
     height:100px;
-
     border:none;
-
     border-radius:25px;
-
     background:#0f172a;
-
     color:white;
-
     font-size:55px;
-
     touch-action:none;
 }
-
 #slider{
-
     width:92%;
 }
 
 .ab-row{
-
     display:flex;
-
     gap:15px;
-
     padding:15px;
 }
-
 .ab-btn{
-
     flex:1;
-
     height:110px;
-
     border:none;
-
     border-radius:25px;
-
     color:white;
-
     font-size:40px;
-
     touch-action:none;
 }
-
-#aBtn{
-    background:#ff8800;
-}
-
-#bBtn{
-    background:#00aa66;
-}
+#aBtn{ background:#ff8800; }
+#bBtn{ background:#00aa66; }
 
 .mode-row{
-
     display:flex;
-
     gap:15px;
-
     padding:15px;
 }
-
 .mode-btn{
-
     flex:1;
-
     height:110px;
-
     border:none;
-
     border-radius:25px;
-
     color:white;
-
     font-size:35px;
-
     touch-action:none;
 }
-
-#normalBtn{
-    background:#0f766e;
-}
-
-#smoothBtn{
-    background:#7c3aed;
-}
-
+#normalBtn{ background:#0f766e; }
+#smoothBtn{ background:#7c3aed; }
 </style>
 </head>
 
 <body>
 
-<h1>
-🚗 micro:bit FPV Car
-</h1>
+<h1>🚗 micro:bit FPV Car</h1>
 
-<video
-id="video"
-autoplay
-playsinline
-muted>
-</video>
+<video id="video" autoplay playsinline muted></video>
 
-<div id="status">
-未接続
-</div>
+<div id="status">未接続</div>
 
-<button
-type="button"
-id="connectBtn">
-BLE接続
-</button>
+<button id="connectBtn">BLE接続</button>
 
 <div class="control-grid">
-
-<button
-type="button"
-id="up"
-class="ctrl">
-▲
-</button>
-
-<button
-type="button"
-id="left"
-class="ctrl">
-◀
-</button>
-
-<button
-type="button"
-id="down"
-class="ctrl">
-▼
-</button>
-
-<button
-type="button"
-id="right"
-class="ctrl">
-▶
-</button>
-
+    <button id="up" class="ctrl">▲</button>
+    <button id="left" class="ctrl">◀</button>
+    <button id="down" class="ctrl">▼</button>
+    <button id="right" class="ctrl">▶</button>
 </div>
 
-<button
-type="button"
-id="stop">
-STOP
-</button>
+<button id="stop">STOP</button>
 
-<div class="speed-title">
-SPEED
-</div>
-
-<div id="speedValue">
-25
-</div>
+<div class="speed-title">SPEED</div>
+<div id="speedValue">25</div>
 
 <div class="speed-row">
-
-<button
-type="button"
-id="minus"
-class="speed-btn">
-−
-</button>
-
-<button
-type="button"
-id="plus"
-class="speed-btn">
-+
-</button>
-
+    <button id="minus" class="speed-btn">−</button>
+    <button id="plus" class="speed-btn">+</button>
 </div>
 
-<input
-type="range"
-id="slider"
-min="0"
-max="60"
-value="25">
+<input type="range" id="slider" min="0" max="60" value="25">
 
 <div class="ab-row">
-
-<button
-type="button"
-id="aBtn"
-class="ab-btn">
-A 高速
-</button>
-
-<button
-type="button"
-id="bBtn"
-class="ab-btn">
-B 通常
-</button>
-
+    <button id="aBtn" class="ab-btn">A 高速</button>
+    <button id="bBtn" class="ab-btn">B 通常</button>
 </div>
 
 <div class="mode-row">
-
-<button
-type="button"
-id="normalBtn"
-class="mode-btn">
-普通走行
-</button>
-
-<button
-type="button"
-id="smoothBtn"
-class="mode-btn">
-滑らか走行
-</button>
-
+    <button id="normalBtn" class="mode-btn">普通走行</button>
+    <button id="smoothBtn" class="mode-btn">滑らか走行</button>
 </div>
 
 <script>
-
 let uartTx = null;
-
-const encoder =
-new TextEncoder();
-
+const encoder = new TextEncoder();
 let speed = 25;
 
-const statusDiv =
-document.getElementById("status");
+const statusDiv = document.getElementById("status");
+const speedValue = document.getElementById("speedValue");
+const slider = document.getElementById("slider");
+const video = document.getElementById("video");
 
-const speedValue =
-document.getElementById("speedValue");
-
-const slider =
-document.getElementById("slider");
-
-const video =
-document.getElementById("video");
-
+/* カメラ起動 */
 async function startCamera(){
-
     try{
-
-        const stream =
-        await navigator.mediaDevices
-        .getUserMedia({
-
-            video:{
-                facingMode:"environment"
-            },
-
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video:{ facingMode:"environment" },
             audio:false
         });
-
         video.srcObject = stream;
-
     }catch(e){
-
         console.log(e);
     }
 }
 
+/* 速度表示更新 */
 function updateSpeed(){
-
     speedValue.innerText = speed;
-
     slider.value = speed;
 }
 
+/* ★★★ micro:bit に確実に届く send() ★★★ */
 async function send(msg){
-
-    if(!uartTx){
-
-        console.log("uartTxなし");
-
-        return;
-    }
-
+    if(!uartTx) return;
     try{
-
-        console.log("SEND:", msg);
-
-        await uartTx.writeValue(
+        await uartTx.writeValueWithoutResponse(
             encoder.encode(msg + "\n")
         );
-
     }catch(e){
-
         console.log(e);
     }
 }
 
+/* ★★★ micro:bit に確実に接続できる BLE ★★★ */
 async function connectBLE(){
-
     try{
-
-        const device =
-        await navigator.bluetooth
-        .requestDevice({
-
-            acceptAllDevices:true,
-
+        const device = await navigator.bluetooth.requestDevice({
+            filters:[ { namePrefix:"BBC micro:bit" } ],
             optionalServices:[
                 "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
             ]
         });
 
-        const server =
-        await device.gatt.connect();
+        const server = await device.gatt.connect();
 
-        const service =
-        await server.getPrimaryService(
+        const service = await server.getPrimaryService(
             "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
         );
 
-        uartTx =
-        await service.getCharacteristic(
+        uartTx = await service.getCharacteristic(
             "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
         );
 
-        statusDiv.innerText =
-        "BLE接続成功";
-
-        console.log("BLE接続成功");
+        statusDiv.innerText = "BLE接続成功";
 
     }catch(e){
-
         console.log(e);
-
-        statusDiv.innerText =
-        "BLE接続失敗";
+        statusDiv.innerText = "BLE接続失敗";
     }
 }
 
-document
-.getElementById("connectBtn")
-.onclick = connectBLE;
+document.getElementById("connectBtn").onclick = connectBLE;
 
+/* 押しっぱなし対応 */
 function holdButton(id,msg){
+    const btn = document.getElementById(id);
 
-    const btn =
-    document.getElementById(id);
-
-    btn.onpointerdown =
-    async (e)=>{
-
-        e.preventDefault();
-
-        await send(msg);
-    };
-
-    btn.onpointerup =
-    async (e)=>{
-
-        e.preventDefault();
-
-        await send("S");
-    };
-
-    btn.onpointercancel =
-    async ()=>{
-
-        await send("S");
-    };
-
-    btn.onpointerleave =
-    async ()=>{
-
-        await send("S");
-    };
+    btn.onpointerdown = e => { e.preventDefault(); send(msg); };
+    btn.onpointerup   = e => { e.preventDefault(); send("S"); };
+    btn.onpointerleave = () => send("S");
+    btn.onpointercancel = () => send("S");
 }
 
 holdButton("up","F");
@@ -578,107 +273,45 @@ holdButton("down","B");
 holdButton("left","L");
 holdButton("right","R");
 
-document
-.getElementById("stop")
-.onclick =
-async ()=>{
+document.getElementById("stop").onclick = () => send("S");
 
-    await send("S");
-};
-
-document
-.getElementById("plus")
-.onclick =
-async ()=>{
-
-    speed += 5;
-
-    if(speed > 60){
-        speed = 60;
-    }
-
+/* 速度 + / - */
+document.getElementById("plus").onclick = () => {
+    speed = Math.min(60, speed + 5);
     updateSpeed();
-
-    await send(
-        "SPD:" + speed
-    );
+    send("SPD:" + speed);
 };
-
-document
-.getElementById("minus")
-.onclick =
-async ()=>{
-
-    speed -= 5;
-
-    if(speed < 0){
-        speed = 0;
-    }
-
+document.getElementById("minus").onclick = () => {
+    speed = Math.max(0, speed - 5);
     updateSpeed();
-
-    await send(
-        "SPD:" + speed
-    );
+    send("SPD:" + speed);
 };
 
-slider.oninput =
-async ()=>{
-
-    speed =
-    parseInt(slider.value);
-
+/* スライダー */
+slider.oninput = () => {
+    speed = parseInt(slider.value);
     updateSpeed();
-
-    await send(
-        "SPD:" + speed
-    );
+    send("SPD:" + speed);
 };
 
-document
-.getElementById("aBtn")
-.onclick =
-async ()=>{
-
+/* A / B */
+document.getElementById("aBtn").onclick = () => {
     speed = 55;
-
     updateSpeed();
-
-    await send("A");
+    send("A");
 };
-
-document
-.getElementById("bBtn")
-.onclick =
-async ()=>{
-
+document.getElementById("bBtn").onclick = () => {
     speed = 25;
-
     updateSpeed();
-
-    await send("B");
+    send("B");
 };
 
-document
-.getElementById("normalBtn")
-.onclick =
-async ()=>{
-
-    await send("MODE:N");
-};
-
-document
-.getElementById("smoothBtn")
-.onclick =
-async ()=>{
-
-    await send("MODE:S");
-};
+/* MODE */
+document.getElementById("normalBtn").onclick = () => send("MODE:N");
+document.getElementById("smoothBtn").onclick = () => send("MODE:S");
 
 updateSpeed();
-
 startCamera();
-
 </script>
 
 </body>
