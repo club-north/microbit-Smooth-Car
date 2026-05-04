@@ -1,13 +1,21 @@
 {
-  "name":"microbit Car Controller",
-  "short_name":"CarCtrl",
-  "start_url":"./index.html",
-  "display":"standalone",
-  "background_color":"#0f172a",
-  "theme_color":"#111827",
-  "orientation":"landscape",
-  "icons":[
-    { "src":"icon-192.png", "sizes":"192x192", "type":"image/png" },
-    { "src":"icon-512.png", "sizes":"512x512", "type":"image/png" }
+  "name": "micro:bit FPV Car",
+  "short_name": "FPV Car",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000814",
+  "theme_color": "#000814",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
