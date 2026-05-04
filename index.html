@@ -215,16 +215,13 @@ function updateSpeed(){
     slider.value = speed;
 }
 
-/* ★★★ micro:bit に確実に届く send()（1文字ずつ送信） ★★★ */
+/* ★★★ micro:bit が確実に受信する send()（writeValue のみ） ★★★ */
 async function send(msg){
     if(!uartTx) return;
     try{
-        const text = msg + "\n";
-        for (let i = 0; i < text.length; i++){
-            await uartTx.writeValue(
-                Uint8Array.from([ text.charCodeAt(i) ])
-            );
-        }
+        await uartTx.writeValue(
+            encoder.encode(msg + "\n")
+        );
     }catch(e){
         console.log(e);
     }
