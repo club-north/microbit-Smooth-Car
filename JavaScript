@@ -1,19 +1,16 @@
 async function connectBLE(){
-
     try{
-
         const device =
         await navigator.bluetooth.requestDevice({
-
-            acceptAllDevices:true,
-
+            filters: [
+                { namePrefix: "BBC micro:bit" }
+            ],
             optionalServices:[
                 "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
             ]
         });
 
-        const server =
-        await device.gatt.connect();
+        const server = await device.gatt.connect();
 
         const service =
         await server.getPrimaryService(
@@ -25,11 +22,10 @@ async function connectBLE(){
             "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
         );
 
-        console.log("BLE接続成功");
+        statusDiv.innerText = "BLE接続成功";
 
     }catch(e){
-
         console.log(e);
+        statusDiv.innerText = "BLE接続失敗";
     }
 }
-
