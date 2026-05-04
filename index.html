@@ -2,313 +2,682 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>micro:bit Car Controller</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#111827">
+<meta name="viewport"
+content="
+width=device-width,
+initial-scale=1,
+user-scalable=no">
+
+<title>
+micro:bit FPV Smooth Car
+</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
 
 body{
-  margin:0;
-  background:#0f172a;
-  color:white;
-  font-family:system-ui,sans-serif;
-  overflow:hidden;
+    margin:0;
+    background:#000814;
+    color:white;
+    font-family:sans-serif;
+    text-align:center;
 }
 
-.landscape{
-  display:flex;
-  flex-direction:row;
-  height:100vh;
-  padding:10px;
-  gap:12px;
+h1{
+    font-size:48px;
+    margin:20px;
 }
 
-/* 左側：操作ゾーン */
-.left-zone{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:14px;
+#video{
+
+    width:94%;
+    max-height:420px;
+
+    margin-top:10px;
+
+    border-radius:25px;
+
+    background:black;
+
+    object-fit:cover;
 }
 
-/* 右側：映像ゾーン */
-.right-zone{
-  flex:1.2;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+#status{
+
+    margin:20px;
+
+    padding:20px;
+
+    background:#09142f;
+
+    border-radius:25px;
+
+    font-size:36px;
+
+    color:#44ff88;
 }
 
-.video-area{
-  width:100%;
-  height:100%;
-  background:#000;
-  border-radius:16px;
-  overflow:hidden;
+#connectBtn{
+
+    width:94%;
+    height:110px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:45px;
 }
 
-#cam{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+.control-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    1fr 1fr 1fr;
+
+    grid-template-rows:
+    170px 170px;
+
+    gap:20px;
+
+    padding:20px;
+
+    align-items:center;
 }
 
-/* ボタン共通 */
-.btn{
-  border:none;
-  border-radius:18px;
-  background:#2563eb;
-  color:white;
-  height:70px;
-  font-size:1.4rem;
-  box-shadow:0 6px 16px rgba(0,0,0,.4);
+.ctrl{
+
+    width:100%;
+    height:170px;
+
+    border:none;
+
+    border-radius:35px;
+
+    background:#2b52d4;
+
+    color:white;
+
+    font-size:85px;
+
+    touch-action:none;
 }
 
-.btn:active{
-  transform:scale(.96);
-  background:#3b82f6;
+#up{
+    grid-column:2;
 }
 
-/* D-Pad */
-.pad{
-  display:grid;
-  grid-template-columns:repeat(3,80px);
-  grid-template-rows:repeat(3,80px);
-  gap:10px;
+#left{
+    grid-column:1;
+    grid-row:2;
 }
 
-.blank{
-  visibility:hidden;
+#down{
+    grid-column:2;
+    grid-row:2;
 }
 
-/* GL/GR・A/B */
-.glgr-row, .ab-row{
-  display:flex;
-  gap:16px;
+#right{
+    grid-column:3;
+    grid-row:2;
 }
 
-.glgr{
-  background:#22c55e;
+#stop{
+
+    width:92%;
+    height:150px;
+
+    border:none;
+
+    border-radius:35px;
+
+    background:#e11d48;
+
+    color:white;
+
+    font-size:60px;
+
+    margin-top:10px;
 }
 
-.ab{
-  background:#facc15;
-  color:black;
+.speed-title{
+
+    font-size:50px;
+
+    margin-top:35px;
 }
 
-/* SPEED */
-.panel{
-  background:#111827;
-  padding:12px;
-  border-radius:14px;
-  width:220px;
+#speedValue{
+
+    font-size:70px;
+
+    margin-top:10px;
 }
 
-.panel-title{
-  text-align:center;
-  margin-bottom:6px;
-  color:#94a3b8;
+.speed-row{
+
+    display:flex;
+
+    gap:20px;
+
+    padding:20px;
 }
 
-.slider{
-  width:100%;
+.speed-btn{
+
+    flex:1;
+
+    height:120px;
+
+    border:none;
+
+    border-radius:30px;
+
+    background:#0f172a;
+
+    color:white;
+
+    font-size:70px;
 }
 
-/* MODE */
-.mode{
-  display:flex;
-  gap:12px;
+#slider{
+
+    width:92%;
+
+    margin-top:10px;
 }
 
-.normal{
-  background:#0f766e;
+.ab-row{
+
+    display:flex;
+
+    gap:20px;
+
+    padding:20px;
 }
 
-.smooth{
-  background:#7c3aed;
+.ab-btn{
+
+    flex:1;
+
+    height:130px;
+
+    border:none;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-size:50px;
 }
 
-/* STOP */
-.stop{
-  width:220px;
-  height:60px;
-  border:none;
-  border-radius:16px;
-  background:#dc2626;
-  color:white;
-  font-size:1.2rem;
+#aBtn{
+    background:#ff8800;
 }
 
-/* 接続ステータス */
-.status{
-  text-align:center;
-  padding:6px;
-  border-radius:12px;
-  background:#111827;
-  width:220px;
+#bBtn{
+    background:#00aa66;
 }
 
-.connected{ color:#4ade80; }
-.disconnected{ color:#f87171; }
+.mode-row{
 
-.connect{
-  width:220px;
-  height:50px;
-  border:none;
-  border-radius:16px;
-  background:#334155;
-  color:white;
+    display:flex;
+
+    gap:20px;
+
+    padding:20px;
 }
+
+.mode-btn{
+
+    flex:1;
+
+    height:130px;
+
+    border:none;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-size:45px;
+}
+
+#normalBtn{
+    background:#0f766e;
+}
+
+#smoothBtn{
+    background:#7c3aed;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="landscape">
+<h1>
+🚗 micro:bit FPV Car
+</h1>
 
-  <!-- 左：操作ゾーン -->
-  <div class="left-zone">
+<video
+id="video"
+autoplay
+playsinline
+muted>
+</video>
 
-    <div id="status" class="status disconnected">未接続</div>
-    <button id="connect" class="connect">⛓ micro:bit 接続</button>
+<div id="status">
+未接続
+</div>
 
-    <!-- D-Pad -->
-    <div class="pad">
-      <div class="blank"></div>
-      <button id="up" class="btn">▲</button>
-      <div class="blank"></div>
+<button id="connectBtn">
+BLE接続
+</button>
 
-      <button id="left" class="btn">◀</button>
-      <button id="down" class="btn">▼</button>
-      <button id="right" class="btn">▶</button>
-    </div>
+<div class="control-grid">
 
-    <!-- GL / GR -->
-    <div class="glgr-row">
-      <button id="btnGL" class="btn glgr">GL</button>
-      <button id="btnGR" class="btn glgr">GR</button>
-    </div>
+<button id="up" class="ctrl">
+▲
+</button>
 
-    <!-- A / B -->
-    <div class="ab-row">
-      <button id="btnA" class="btn ab">A</button>
-      <button id="btnB" class="btn ab">B</button>
-    </div>
+<button id="left" class="ctrl">
+◀
+</button>
 
-    <!-- SPEED -->
-    <div class="panel">
-      <div class="panel-title">SPEED</div>
-      <input id="speed" class="slider" type="range" min="0" max="60" step="5" value="25">
-    </div>
+<button id="down" class="ctrl">
+▼
+</button>
 
-    <!-- MODE -->
-    <div class="mode">
-      <button id="normal" class="normal">普通</button>
-      <button id="smooth" class="smooth">滑らか</button>
-    </div>
+<button id="right" class="ctrl">
+▶
+</button>
 
-    <button id="stop" class="stop">STOP</button>
+</div>
 
-  </div>
+<button id="stop">
+STOP
+</button>
 
-  <!-- 右：映像ゾーン -->
-  <div class="right-zone">
-    <div class="video-area">
-      <video id="cam" autoplay playsinline></video>
-    </div>
-  </div>
+<div class="speed-title">
+SPEED
+</div>
+
+<div id="speedValue">
+25
+</div>
+
+<div class="speed-row">
+
+<button
+id="minus"
+class="speed-btn">
+−
+</button>
+
+<button
+id="plus"
+class="speed-btn">
++
+</button>
+
+</div>
+
+<input
+type="range"
+id="slider"
+min="0"
+max="60"
+value="25">
+
+<div class="ab-row">
+
+<button
+id="aBtn"
+class="ab-btn">
+A 高速
+</button>
+
+<button
+id="bBtn"
+class="ab-btn">
+B 通常
+</button>
+
+</div>
+
+<div class="mode-row">
+
+<button
+id="normalBtn"
+class="mode-btn">
+普通走行
+</button>
+
+<button
+id="smoothBtn"
+class="mode-btn">
+滑らか走行
+</button>
 
 </div>
 
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("./service-worker.js")
+
+let uartTx = null;
+
+const encoder =
+new TextEncoder();
+
+let speed = 25;
+
+const statusDiv =
+document.getElementById("status");
+
+const speedValue =
+document.getElementById("speedValue");
+
+const slider =
+document.getElementById("slider");
+
+const video =
+document.getElementById("video");
+
+# -----------------------------------
+# 背面カメラ開始
+# -----------------------------------
+async function startCamera(){
+
+    try{
+
+        const stream =
+        await navigator.mediaDevices
+        .getUserMedia({
+
+            video:{
+                facingMode:"environment"
+            },
+
+            audio:false
+        });
+
+        video.srcObject = stream;
+
+    }catch(e){
+
+        console.log(e);
+
+    }
 }
 
-const UART_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
-const UART_RX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+# -----------------------------------
+# 速度表示更新
+# -----------------------------------
+function updateSpeed(){
 
-let uart = null
+    speedValue.innerText = speed;
 
-function setStatus(text, ok){
-  const el = document.getElementById("status")
-  el.textContent = text
-  el.className = ok ? "status connected" : "status disconnected"
+    slider.value = speed;
 }
 
-async function connectMicrobit(){
-  try{
-    const device = await navigator.bluetooth.requestDevice({
-      filters:[{ namePrefix:"BBC micro:bit" }],
-      optionalServices:[ UART_SERVICE ]
-    })
+# -----------------------------------
+# BLE送信
+# -----------------------------------
+async function send(msg){
 
-    const server = await device.gatt.connect()
-    const service = await server.getPrimaryService(UART_SERVICE)
-    uart = await service.getCharacteristic(UART_RX)
+    if(!uartTx) return;
 
-    setStatus("接続済み", true)
+    try{
 
-  }catch(e){
-    alert(e)
-    setStatus("未接続", false)
-  }
+        await uartTx
+        .writeValueWithoutResponse(
+            encoder.encode(msg + "\n")
+        );
+
+    }catch(e){
+
+        console.log(e);
+    }
 }
 
-function send(text){
-  if(!uart) return
-  uart.writeValue(new TextEncoder().encode(text + "\n"))
+# -----------------------------------
+# BLE接続
+# -----------------------------------
+document
+.getElementById("connectBtn")
+.addEventListener(
+"click",
+connectBLE
+);
+
+async function connectBLE(){
+
+    try{
+
+        const device =
+        await navigator.bluetooth
+        .requestDevice({
+
+            filters:[
+                {
+                    namePrefix:"BBC"
+                }
+            ],
+
+            optionalServices:[
+                "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
+            ]
+        });
+
+        const server =
+        await device.gatt.connect();
+
+        const service =
+        await server
+        .getPrimaryService(
+            "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
+        );
+
+        uartTx =
+        await service.getCharacteristic(
+            "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+        );
+
+        statusDiv.innerText =
+        "micro:bit 接続済み";
+
+    }catch(e){
+
+        console.log(e);
+
+        statusDiv.innerText =
+        "接続失敗";
+    }
 }
 
-function hold(id, cmd){
-  const btn = document.getElementById(id)
+# -----------------------------------
+# 押している間送信
+# -----------------------------------
+function holdButton(id,msg){
 
-  btn.ontouchstart = e => { e.preventDefault(); send(cmd) }
-  btn.ontouchend   = e => { e.preventDefault(); send("S") }
+    const btn =
+    document.getElementById(id);
 
-  btn.onmousedown  = () => send(cmd)
-  btn.onmouseup    = () => send("S")
-  btn.onmouseleave = () => send("S")
+    btn.addEventListener(
+    "touchstart",
+    async (e)=>{
+
+        e.preventDefault();
+
+        await send(msg);
+    });
+
+    btn.addEventListener(
+    "touchend",
+    async (e)=>{
+
+        e.preventDefault();
+
+        await send("S");
+    });
+
+    btn.addEventListener(
+    "mousedown",
+    async ()=>{
+
+        await send(msg);
+    });
+
+    btn.addEventListener(
+    "mouseup",
+    async ()=>{
+
+        await send("S");
+    });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+holdButton("up","F");
+holdButton("down","B");
+holdButton("left","L");
+holdButton("right","R");
 
-  document.getElementById("connect").onclick = connectMicrobit
+# -----------------------------------
+# STOP
+# -----------------------------------
+document
+.getElementById("stop")
+.addEventListener(
+"click",
+async ()=>{
 
-  hold("up","F")
-  hold("down","B")
-  hold("left","L")
-  hold("right","R")
+    await send("S");
+});
 
-  hold("btnGL","GL")
-  hold("btnGR","GR")
+# -----------------------------------
+# SPEED +
+# -----------------------------------
+document
+.getElementById("plus")
+.addEventListener(
+"click",
+async ()=>{
 
-  hold("btnA","A")
-  hold("btnB","B")
+    speed += 5;
 
-  document.getElementById("stop").onclick = () => send("S")
+    if(speed > 60){
+        speed = 60;
+    }
 
-  document.getElementById("speed").oninput = e => {
-    send("SPD:" + e.target.value)
-  }
+    updateSpeed();
 
-  document.getElementById("normal").onclick = () => send("MODE:N")
-  document.getElementById("smooth").onclick = () => send("MODE:S")
+    await send("SPD:" + speed);
+});
 
-  /* 映像（スマホカメラ） */
-  navigator.mediaDevices.getUserMedia({ video:true, audio:false })
-    .then(stream => {
-      document.getElementById("cam").srcObject = stream
-    })
-})
+# -----------------------------------
+# SPEED -
+# -----------------------------------
+document
+.getElementById("minus")
+.addEventListener(
+"click",
+async ()=>{
+
+    speed -= 5;
+
+    if(speed < 0){
+        speed = 0;
+    }
+
+    updateSpeed();
+
+    await send("SPD:" + speed);
+});
+
+# -----------------------------------
+# スライダー
+# -----------------------------------
+slider.addEventListener(
+"input",
+async ()=>{
+
+    speed =
+    parseInt(slider.value);
+
+    updateSpeed();
+
+    await send(
+        "SPD:" + speed
+    );
+});
+
+# -----------------------------------
+# A 高速
+# -----------------------------------
+document
+.getElementById("aBtn")
+.addEventListener(
+"click",
+async ()=>{
+
+    speed = 55;
+
+    updateSpeed();
+
+    await send("A");
+});
+
+# -----------------------------------
+# B 通常
+# -----------------------------------
+document
+.getElementById("bBtn")
+.addEventListener(
+"click",
+async ()=>{
+
+    speed = 25;
+
+    updateSpeed();
+
+    await send("B");
+});
+
+# -----------------------------------
+# 普通モード
+# -----------------------------------
+document
+.getElementById("normalBtn")
+.addEventListener(
+"click",
+async ()=>{
+
+    await send("MODE:N");
+});
+
+# -----------------------------------
+# 滑らかモード
+# -----------------------------------
+document
+.getElementById("smoothBtn")
+.addEventListener(
+"click",
+async ()=>{
+
+    await send("MODE:S");
+});
+
+# -----------------------------------
+# 起動
+# -----------------------------------
+updateSpeed();
+
+startCamera();
+
 </script>
 
 </body>
