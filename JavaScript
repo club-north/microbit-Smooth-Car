@@ -1,4 +1,18 @@
-hold("btnGL", "GL")
-hold("btnGR", "GR")
-hold("btnA", "A")
-hold("btnB", "B")
+btn.addEventListener(
+"pointerdown",
+async (e)=>{
+
+e.preventDefault();
+
+await send(msg);
+});
+
+btn.addEventListener(
+"pointerup",
+async (e)=>{
+
+e.preventDefault();
+
+await send("S");
+}); 
+
