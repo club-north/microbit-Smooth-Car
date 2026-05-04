@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>micro:bit Car Controller</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111827">
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:#0f172a;
+  color:white;
+  font-family:system-ui,sans-serif;
+  overflow:hidden;
+}
+
+.landscape{
+  display:flex;
+  flex-direction:row;
+  height:100vh;
+  padding:10px;
+  gap:12px;
+}
+
+/* 左側：操作ゾーン */
+.left-zone{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+
+/* 右側：映像ゾーン */
+.right-zone{
+  flex:1.2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.video-area{
+  width:100%;
+  height:100%;
+  background:#000;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+#cam{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* ボタン共通 */
+.btn{
+  border:none;
+  border-radius:18px;
+  background:#2563eb;
+  color:white;
+  height:70px;
+  font-size:1.4rem;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
+}
+
+.btn:active{
+  transform:scale(.96);
+  background:#3b82f6;
+}
+
+/* D-Pad */
+.pad{
+  display:grid;
+  grid-template-columns:repeat(3,80px);
+  grid-template-rows:repeat(3,80px);
+  gap:10px;
+}
+
+.blank{
+  visibility:hidden;
+}
+
+/* GL/GR・A/B */
+.glgr-row, .ab-row{
+  display:flex;
+  gap:16px;
+}
+
+.glgr{
+  background:#22c55e;
+}
+
+.ab{
+  background:#facc15;
+  color:black;
+}
+
+/* SPEED */
+.panel{
+  background:#111827;
+  padding:12px;
+  border-radius:14px;
+  width:220px;
+}
+
+.panel-title{
+  text-align:center;
+  margin-bottom:6px;
+  color:#94a3b8;
+}
+
+.slider{
+  width:100%;
+}
+
+/* MODE */
+.mode{
+  display:flex;
+  gap:12px;
+}
+
+.normal{
+  background:#0f766e;
+}
+
+.smooth{
+  background:#7c3aed;
+}
+
+/* STOP */
+.stop{
+  width:220px;
+  height:60px;
+  border:none;
+  border-radius:16px;
+  background:#dc2626;
+  color:white;
+  font-size:1.2rem;
+}
+
+/* 接続ステータス */
+.status{
+  text-align:center;
+  padding:6px;
+  border-radius:12px;
+  background:#111827;
+  width:220px;
+}
+
+.connected{ color:#4ade80; }
+.disconnected{ color:#f87171; }
+
+.connect{
+  width:220px;
+  height:50px;
+  border:none;
+  border-radius:16px;
+  background:#334155;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="landscape">
+
+  <!-- 左：操作ゾーン -->
+  <div class="left-zone">
+
+    <div id="status" class="status disconnected">未接続</div>
+    <button id="connect" class="connect">⛓ micro:bit 接続</button>
+
+    <!-- D-Pad -->
+    <div class="pad">
+      <div class="blank"></div>
+      <button id="up" class="btn">▲</button>
+      <div class="blank"></div>
+
+      <button id="left" class="btn">◀</button>
+      <button id="down" class="btn">▼</button>
+      <button id="right" class="btn">▶</button>
+    </div>
+
+    <!-- GL / GR -->
+    <div class="glgr-row">
+      <button id="btnGL" class="btn glgr">GL</button>
+      <button id="btnGR" class="btn glgr">GR</button>
+    </div>
+
+    <!-- A / B -->
+    <div class="ab-row">
+      <button id="btnA" class="btn ab">A</button>
+      <button id="btnB" class="btn ab">B</button>
+    </div>
+
+    <!-- SPEED -->
+    <div class="panel">
+      <div class="panel-title">SPEED</div>
+      <input id="speed" class="slider" type="range" min="0" max="60" step="5" value="25">
+    </div>
+
+    <!-- MODE -->
+    <div class="mode">
+      <button id="normal" class="normal">普通</button>
+      <button id="smooth" class="smooth">滑らか</button>
+    </div>
+
+    <button id="stop" class="stop">STOP</button>
+
+  </div>
+
+  <!-- 右：映像ゾーン -->
+  <div class="right-zone">
+    <div class="video-area">
+      <video id="cam" autoplay playsinline></video>
+    </div>
+  </div>
+
+</div>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("./service-worker.js")
+}
+
+const UART_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
+const UART_RX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+
+let uart = null
+
+function setStatus(text, ok){
+  const el = document.getElementById("status")
+  el.textContent = text
+  el.className = ok ? "status connected" : "status disconnected"
+}
+
+async function connectMicrobit(){
+  try{
+    const device = await navigator.bluetooth.requestDevice({
+      filters:[{ namePrefix:"BBC micro:bit" }],
+      optionalServices:[ UART_SERVICE ]
+    })
+
+    const server = await device.gatt.connect()
+    const service = await server.getPrimaryService(UART_SERVICE)
+    uart = await service.getCharacteristic(UART_RX)
+
+    setStatus("接続済み", true)
+
+  }catch(e){
+    alert(e)
+    setStatus("未接続", false)
+  }
+}
+
+function send(text){
+  if(!uart) return
+  uart.writeValue(new TextEncoder().encode(text + "\n"))
+}
+
+function hold(id, cmd){
+  const btn = document.getElementById(id)
+
+  btn.ontouchstart = e => { e.preventDefault(); send(cmd) }
+  btn.ontouchend   = e => { e.preventDefault(); send("S") }
+
+  btn.onmousedown  = () => send(cmd)
+  btn.onmouseup    = () => send("S")
+  btn.onmouseleave = () => send("S")
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  document.getElementById("connect").onclick = connectMicrobit
+
+  hold("up","F")
+  hold("down","B")
+  hold("left","L")
+  hold("right","R")
+
+  hold("btnGL","GL")
+  hold("btnGR","GR")
+
+  hold("btnA","A")
+  hold("btnB","B")
+
+  document.getElementById("stop").onclick = () => send("S")
+
+  document.getElementById("speed").oninput = e => {
+    send("SPD:" + e.target.value)
+  }
+
+  document.getElementById("normal").onclick = () => send("MODE:N")
+  document.getElementById("smooth").onclick = () => send("MODE:S")
+
+  /* 映像（スマホカメラ） */
+  navigator.mediaDevices.getUserMedia({ video:true, audio:false })
+    .then(stream => {
+      document.getElementById("cam").srcObject = stream
+    })
+})
+</script>
+
+</body>
+</html>
